@@ -32,7 +32,7 @@ You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/ether
 
 An `EtherpadLite` instance has the following fields:
 
- - APIVersion: The HTTP API version. Defaults to TODO.
+ - APIVersion: The HTTP API version. Defaults to 1.2.12.
  - BaseParams: A map that contains the parameters that are sent in every request. The api key gets added in `NewEtherpadLite`.
  - BaseURL: The URL pointing to the API of your pad, i.e. http://pad.domain/api. Defaults to http://localhost:9001/api in `NewEtherpadLite`.
  - Client: The client used to send the GET requests. The default Timeout for the Client is 20 seconds.
