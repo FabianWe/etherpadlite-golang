@@ -5,7 +5,7 @@ An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-li
 Run `go get FabianWe/etherpadlite-golang`
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 ## Supported API Versions
-Though I haven not tested each and every method I'm very confident that all versions including version 1.2.10 are supported. Feedback is very welcome!
+Though I haven not tested each and every method I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
 
 ## Usage
 Here's a very simple example that should give you the idean:
@@ -32,7 +32,7 @@ You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/ether
 
 An `EtherpadLite` instance has the following fields:
 
- - APIVersion: The HTTP API version. Defaults to 1.2.10.
+ - APIVersion: The HTTP API version. Defaults to 1.2.13. Note that this is a rather new version, if you have an older version of etherpad-lite you may have to adjust this!
  - BaseParams: A map that contains the parameters that are sent in every request. The API key gets added in `NewEtherpadLite`.
  - BaseURL: The URL pointing to the API of your pad, i.e. http://pad.domain/api. Defaults to http://localhost:9001/api in `NewEtherpadLite`.
  - Client: The client used to send the GET requests. The default Timeout for the Client is 20 seconds.
