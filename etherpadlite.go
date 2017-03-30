@@ -23,9 +23,9 @@
 //
 // All methods return a Response and an error (!= nil if something went wrong).
 // The first argument of all methods is always a Context ctx. If set to a non-nil
-// context the requests are created with the given context and are cancelled
-// once ctx gets cancelled. If you don't want to use any context stuff just
-// set it to nil.
+// context the method will return nil and an error != nil when the
+// context gets cancelled.
+// If you don't want to use any context stuff just set it to nil.
 //
 // Using one etherpadlite.EtherpadLite instance from multiple goroutines is
 // safe (if you're not setting any values on it).
@@ -37,6 +37,7 @@ package etherpadlite
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -108,8 +109,32 @@ type Response struct {
 // request. It will encode the BaseParams and params into URL queries and
 // do the http GET.
 // It decodes the JSON result and returns the decoded version.
-// If ctx != nil the request gets cancelled when the context gets cancelled.
+// If ctx != nil the method will be cancelled once ctx gets cancelled.
 func (pad *EtherpadLite) sendRequest(ctx context.Context, path string, params map[string]interface{}) (*Response, error) {
+	type resType struct {
+		response *Response
+		err      error
+	}
+	if ctx == nil {
+		return pad.sendRequestWithoutContext(ctx, path, params)
+	}
+	ch := make(chan *resType, 1)
+	go func() {
+		resp, resErr := pad.sendRequestWithoutContext(ctx, path, params)
+		ch <- &resType{response: resp, err: resErr}
+	}()
+	select {
+	case <-ctx.Done():
+		return nil, errors.New("ctx cancelled")
+	case res := <-ch:
+		return res.response, res.err
+	}
+}
+
+// sendRequestWithoutContext does the actual stuff, it gets the request
+// and ignores the ctx. sendRequest listens on done and calls this method in
+// a different goroutine.
+func (pad *EtherpadLite) sendRequestWithoutContext(ctx context.Context, path string, params map[string]interface{}) (*Response, error) {
 	getURL, err := url.Parse(fmt.Sprintf("%s/%s/%s", pad.BaseURL, pad.APIVersion, path))
 	if err != nil {
 		return nil, err
