@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	etherpadlite "github.com/FabianWe/etherpadlite-golang"
 )
@@ -23,8 +24,10 @@ import (
 func main() {
 	apiKey := "7e7d913826c58a5ded3c5bc2c426918650c92829ae6d30ca091441ea052a58a3"
 	pad := etherpadlite.NewEtherpadLite(apiKey)
-	fmt.Println(pad.CreatePad(nil, "foo", 0))
-	// fmt.Println(pad.DeletePad(nil, "xxx"))
-	// fmt.Println(pad.DeletePad(nil, "foo"))
-	// fmt.Println(pad.DeletePad(nil, "bar"))
+	response, err := pad.CreatePad(nil, "foo", etherpadlite.OptionalParam)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(response.Message, response.Data)
+	fmt.Println(pad.DeletePad(nil, "foo"))
 }

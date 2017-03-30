@@ -13,11 +13,13 @@
 // limitations under the License.
 
 // etherpadlite provides an interface for Etherpad-Lite's HTTP API written in Go.
-// The API documentation can be found at <https://github.com/ether/etherpad-lite/wiki/HTTP-API>.
+// The API documentation can be found at https://github.com/ether/etherpad-lite/wiki/HTTP-API.
 // To use it create an instance of etherpadlite.EtherpadLite and call the
 // API methods on it, for example CreatePad(nil, padID, text).
 // If a parameter is optional, like text is in createPad,
 // simply set the value to etherpadlite.OptionalParam.
+// If there is a parameter with a default value, like copyPad(sourceID, destinationID[, force=false]),
+// setting force to OptionalParam will set the value to the default value.
 //
 // All methods return a Response and an error (!= nil if something went wrong).
 // The first argument of all methods is always a Context ctx. If set to a non-nil
@@ -42,8 +44,12 @@ import (
 	"time"
 )
 
+// optionalParamType is an unexported type to identify an optional parameter
+// we don't want to use.
 type optionalParamType int
 
+// OptionalParam is a constant used to identify an optional parameter we don't
+// want to use.
 const OptionalParam optionalParamType = 0
 
 // EtherpadLite is a struct that is used to connect to the etherpadlite API.
@@ -78,7 +84,7 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams["apikey"] = apiKey
 	client := &http.Client{}
 	client.Timeout = time.Duration(20 * time.Second)
-	return &EtherpadLite{APIVersion: "1", BaseParams: baseParams,
+	return &EtherpadLite{APIVersion: "1.2.12", BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
 }
 
@@ -168,6 +174,10 @@ func (pad *EtherpadLite) CreateGroupPad(ctx context.Context, groupID, padName, t
 	return pad.sendRequest(ctx, "createGroupPad", params)
 }
 
+func (pad *EtherpadLite) ListAllGroups(ctx context.Context) (*Response, error) {
+	return pad.sendRequest(ctx, "listAllGroups", nil)
+}
+
 // Author
 
 func (pad *EtherpadLite) CreateAuthor(ctx context.Context, name interface{}) (*Response, error) {
@@ -188,6 +198,10 @@ func (pad *EtherpadLite) CreateAuthorIfNotExistsFor(ctx context.Context, authorM
 
 func (pad *EtherpadLite) ListPadsOfAuthor(ctx context.Context, authorID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "listPadsOfAuthor", map[string]interface{}{"authorID": authorID})
+}
+
+func (pad *EtherpadLite) GetAuthorName(ctx context.Context, authorID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "getAuthorName", map[string]interface{}{"authorID": authorID})
 }
 
 // Session
@@ -236,6 +250,49 @@ func (pad *EtherpadLite) GetHTML(ctx context.Context, padID, rev interface{}) (*
 	return pad.sendRequest(ctx, "getHTML", params)
 }
 
+func (pad *EtherpadLite) SetHTML(ctx context.Context, padID, html interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "setHTML", map[string]interface{}{"padID": padID, "html": html})
+}
+
+func (pad *EtherpadLite) GetAttributePool(ctx context.Context, padID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "getAttributePool", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) GetRevisionChangeset(ctx context.Context, padID, rev interface{}) (*Response, error) {
+	params := map[string]interface{}{"padID": padID}
+	if rev != OptionalParam {
+		params["rev"] = rev
+	}
+	return pad.sendRequest(ctx, "getRevisionChangeset", params)
+}
+
+func (pad *EtherpadLite) CreateDiffHTML(ctx context.Context, padID, startRev, endRev interface{}) (*Response, error) {
+	return pad.sendRequest(ctx,
+		"createDiffHTML",
+		map[string]interface{}{
+			"padID":    padID,
+			"startRev": startRev,
+			"endRev":   endRev,
+		})
+}
+
+// Chat
+
+func (pad *EtherpadLite) GetChatHistory(ctx context.Context, padID, start, end interface{}) (*Response, error) {
+	params := map[string]interface{}{"padID": padID}
+	if start != OptionalParam {
+		params["start"] = start
+	}
+	if end != OptionalParam {
+		params["end"] = end
+	}
+	return pad.sendRequest(ctx, "getChatHistory", params)
+}
+
+func (pad *EtherpadLite) GetChatHead(ctx context.Context, padID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "getChatHead", map[string]interface{}{"padID": padID})
+}
+
 // Pad
 
 func (pad *EtherpadLite) CreatePad(ctx context.Context, padID, text interface{}) (*Response, error) {
@@ -250,16 +307,60 @@ func (pad *EtherpadLite) GetRevisionsCount(ctx context.Context, padID interface{
 	return pad.sendRequest(ctx, "getRevisionsCount", map[string]interface{}{"padID": padID})
 }
 
+func (pad *EtherpadLite) GetSavedRevisionsCount(ctx context.Context, padID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "getSavedRevisionsCount", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) ListSavedRevisions(ctx context.Context, padID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "listSavedRevisions", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) SaveRevision(ctx context.Context, padID, rev interface{}) (*Response, error) {
+	params := map[string]interface{}{"padID": padID}
+	if rev != OptionalParam {
+		params["rev"] = rev
+	}
+	return pad.sendRequest(ctx, "saveRevision", params)
+}
+
 func (pad *EtherpadLite) PadUsersCount(ctx context.Context, padID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "padUsersCount", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) PadUsers(ctx context.Context, padID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "padUsers", map[string]interface{}{"padID": padID})
 }
 
 func (pad *EtherpadLite) DeletePad(ctx context.Context, padID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "deletePad", map[string]interface{}{"padID": padID})
 }
 
+func (pad *EtherpadLite) CopyPad(ctx context.Context, sourceID, destinationID, force interface{}) (*Response, error) {
+	params := map[string]interface{}{"sourceID": sourceID, "destinationID": destinationID}
+	if force == OptionalParam {
+		params["force"] = false
+	} else {
+		params["force"] = force
+	}
+	return pad.sendRequest(ctx, "copyPad", params)
+}
+
+func (pad *EtherpadLite) MovePad(ctx context.Context, sourceID, destinationID, force interface{}) (*Response, error) {
+	params := map[string]interface{}{"sourceID": sourceID, "destinationID": destinationID}
+	if force == OptionalParam {
+		params["force"] = false
+	} else {
+		params["force"] = force
+	}
+	return pad.sendRequest(ctx, "movePad", params)
+}
+
 func (pad *EtherpadLite) GetReadOnlyID(ctx context.Context, padID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "getReadOnlyID", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) GetPadID(ctx context.Context, readOnlyID interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "getPadID", map[string]interface{}{"readOnlyID": readOnlyID})
 }
 
 func (pad *EtherpadLite) SetPublicStatus(ctx context.Context, padID, publicStatus interface{}) (*Response, error) {
@@ -284,4 +385,18 @@ func (pad *EtherpadLite) ListAuthorsOfPad(ctx context.Context, padID interface{}
 
 func (pad *EtherpadLite) GetLastEdited(ctx context.Context, padID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "getLastEdited", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) SendClientsMessage(ctx context.Context, padID, msg interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "sendClientsMessage", map[string]interface{}{"padID": padID, "msg": msg})
+}
+
+func (pad *EtherpadLite) CheckToken(ctx context.Context) (*Response, error) {
+	return pad.sendRequest(ctx, "checkToken", nil)
+}
+
+// Pads
+
+func (pad *EtherpadLite) ListAllPads(ctx context.Context) (*Response, error) {
+	return pad.sendRequest(ctx, "listAllPads", nil)
 }
