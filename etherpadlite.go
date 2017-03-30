@@ -19,7 +19,7 @@
 // If a parameter is optional, like text is in createPad,
 // simply set the value to etherpadlite.OptionalParam.
 // If there is a parameter with a default value, like copyPad(sourceID, destinationID[, force=false]),
-// setting force to OptionalParam will set the value to the default value.
+// setting the parameter to OptionalParam will set the value to the default value.
 //
 // All methods return a Response and an error (!= nil if something went wrong).
 // The first argument of all methods is always a Context ctx. If set to a non-nil
