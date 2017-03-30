@@ -85,7 +85,7 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams["apikey"] = apiKey
 	client := &http.Client{}
 	client.Timeout = time.Duration(20 * time.Second)
-	return &EtherpadLite{APIVersion: "1.2.10", BaseParams: baseParams,
+	return &EtherpadLite{APIVersion: "1.2.13", BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
 }
 
@@ -267,6 +267,10 @@ func (pad *EtherpadLite) SetText(ctx context.Context, padID, text interface{}) (
 	return pad.sendRequest(ctx, "setText", map[string]interface{}{"padID": padID, "text": text})
 }
 
+func (pad *EtherpadLite) AppendText(ctx context.Context, padID, text interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "appendText", map[string]interface{}{"padID": padID, "text": text})
+}
+
 func (pad *EtherpadLite) GetHTML(ctx context.Context, padID, rev interface{}) (*Response, error) {
 	params := map[string]interface{}{"padID": padID}
 	if rev != OptionalParam {
@@ -301,6 +305,10 @@ func (pad *EtherpadLite) CreateDiffHTML(ctx context.Context, padID, startRev, en
 		})
 }
 
+func (pad *EtherpadLite) RestoreRevision(ctx context.Context, padId, rev interface{}) (*Response, error) {
+	return pad.sendRequest(ctx, "restoreRevision", map[string]interface{}{"padId": padId, "rev": rev})
+}
+
 // Chat
 
 func (pad *EtherpadLite) GetChatHistory(ctx context.Context, padID, start, end interface{}) (*Response, error) {
@@ -319,6 +327,14 @@ func (pad *EtherpadLite) GetChatHistory(ctx context.Context, padID, start, end i
 
 func (pad *EtherpadLite) GetChatHead(ctx context.Context, padID interface{}) (*Response, error) {
 	return pad.sendRequest(ctx, "getChatHead", map[string]interface{}{"padID": padID})
+}
+
+func (pad *EtherpadLite) appendChatMessage(ctx context.Context, padID, text, authorID, time interface{}) (*Response, error) {
+	params := map[string]interface{}{"padID": padID, "text": text, "authorID": authorID}
+	if time != OptionalParam {
+		params["time"] = time
+	}
+	return pad.sendRequest(ctx, "appendChatMessage", params)
 }
 
 // Pad
