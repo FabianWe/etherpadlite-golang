@@ -4,6 +4,9 @@ An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-li
 ## Installation
 Run `go get FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
+
+Note that you need Go >= 1.7 to use this package because the project uses the new [context](https://golang.org/pkg/context/) package that was formerly `golang.org/x/net/context`.
+
 ## Supported API Versions
 Though I haven't tested each and every function I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
 
@@ -46,6 +49,7 @@ response, err := pad.CreatePad(ctx, "foo", etherpadlite.OptionalParam)
 If a method has a default argument, such as `copyPad(sourceID, destinationID[, force=false])` setting the parameter to `OptionalParam` will set the value to its default.
 
 Using one `EtherpadLite` instance from multiple goroutines is safe (if you're not setting any values on it).
+
 ## License
 Copyright 2017 Fabian Wenzelmann <fabianwen@posteo.eu>
 
