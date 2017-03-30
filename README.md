@@ -1,5 +1,5 @@
 # etherpadlite-golang
-An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) written in Go.
+An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) for Go.
 
 ## Installation
 Run `go get github.com/FabianWe/etherpadlite-golang`.
