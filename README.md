@@ -37,7 +37,7 @@ An `EtherpadLite` instance has the following fields:
  - BaseURL: The URL pointing to the API of your pad, i.e. http://pad.domain/api. Defaults to http://localhost:9001/api in `NewEtherpadLite`.
  - Client: The client used to send the GET requests. The default Timeout for the Client is 20 seconds.
 
-All functions take as first argument a [context.Context](https://golang.org/pkg/context/#Context).  If you pass `ctx != nil` the request will get cancelled when `ctx` gets cancelled. If you don't want to use this simply set it to `nil`. Note that only the request we send via [Client.Do](https://golang.org/pkg/net/http/#Client.Do) will use `ctx`, all the parsing and so on will continue regardless of `ctx`.
+All functions take as first argument a [context.Context](https://golang.org/pkg/context/#Context).  If you pass `ctx != nil` the methods will get cancelled when `ctx` gets cancelled (i.e. return no Response and an error != nil). If you don't want to use this simply set it to `nil`.
 
 If a method has an optional field, for example `text` in `CreatePad`, set the value to `etherpadlite.OptionalParam` if you don't want to use it. So to create a pad without text do:
 ```go
