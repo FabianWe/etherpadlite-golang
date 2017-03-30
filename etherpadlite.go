@@ -25,6 +25,9 @@
 // once ctx gets cancelled. If you don't want to use any context stuff just
 // set it to nil.
 //
+// Using one etherpadlite.EtherpadLite instance from multiple goroutines is
+// safe (if you're not setting any values on it).
+//
 // I didn't document the methods since they're documented very well on the
 // etherpad-lite wiki.
 package etherpadlite
@@ -46,7 +49,7 @@ const OptionalParam optionalParamType = 0
 // EtherpadLite is a struct that is used to connect to the etherpadlite API.
 type EtherpadLite struct {
 	// APIVersion is the api version to use, at the moment it must be set to 1.
-	APIVersion int
+	APIVersion string
 
 	// BaseParams are the parameter that are required in each request, i.e.
 	// will be sent in each request.
@@ -63,7 +66,7 @@ type EtherpadLite struct {
 	// Client is used to send the GET requests to the API.
 	// Set the values as required, especially timeout is important.
 	// That's why there is a special Timeout method to set the timeout.
-	// Timeout defaults to 20 seconds.
+	// Timeout defaults to 20 seconds in NewEtherpadLite.
 	Client *http.Client
 }
 
@@ -75,13 +78,14 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams["apikey"] = apiKey
 	client := &http.Client{}
 	client.Timeout = time.Duration(20 * time.Second)
-	return &EtherpadLite{APIVersion: 1, BaseParams: baseParams,
+	return &EtherpadLite{APIVersion: "1", BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
 }
 
 // Timeout sets Client.Timeout. Since this is something people often want to
 // change I've added this wrapper.
 // The default timeout is 20s.
+// Of course using a context WithTimeout is nicer.
 func (pad *EtherpadLite) Timeout(timeout time.Duration) {
 	pad.Client.Timeout = timeout
 }
@@ -100,7 +104,7 @@ type Response struct {
 // It decodes the JSON result and returns the decoded version.
 // If ctx != nil the request gets cancelled when the context gets cancelled.
 func (pad *EtherpadLite) sendRequest(ctx context.Context, path string, params map[string]interface{}) (*Response, error) {
-	getURL, err := url.Parse(fmt.Sprintf("%s/%d/%s", pad.BaseURL, pad.APIVersion, path))
+	getURL, err := url.Parse(fmt.Sprintf("%s/%s/%s", pad.BaseURL, pad.APIVersion, path))
 	if err != nil {
 		return nil, err
 	}
@@ -112,20 +116,19 @@ func (pad *EtherpadLite) sendRequest(ctx context.Context, path string, params ma
 		parameters.Add(key, fmt.Sprintf("%v", value))
 	}
 	getURL.RawQuery = parameters.Encode()
-	fmt.Println(getURL)
 	req, reqErr := http.NewRequest("GET", getURL.String(), nil)
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
 	if reqErr != nil {
 		return nil, reqErr
 	}
-	resp, getErr := pad.Client.Do(req)
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+	resp, doErr := pad.Client.Do(req)
 	if resp != nil {
 		defer resp.Body.Close()
 	}
-	if getErr != nil {
-		return nil, getErr
+	if doErr != nil {
+		return nil, doErr
 	}
 	allContent, readErr := ioutil.ReadAll(resp.Body)
 	if readErr != nil {
@@ -184,7 +187,7 @@ func (pad *EtherpadLite) CreateAuthorIfNotExistsFor(ctx context.Context, authorM
 }
 
 func (pad *EtherpadLite) ListPadsOfAuthor(ctx context.Context, authorID interface{}) (*Response, error) {
-	return pad.sendRequest(ctx, "listPadsOfAuthor", nil)
+	return pad.sendRequest(ctx, "listPadsOfAuthor", map[string]interface{}{"authorID": authorID})
 }
 
 // Session
@@ -239,9 +242,6 @@ func (pad *EtherpadLite) CreatePad(ctx context.Context, padID, text interface{})
 	params := map[string]interface{}{"padID": padID}
 	if text != OptionalParam {
 		params["text"] = text
-		fmt.Println("Setting text!")
-	} else {
-		fmt.Println("Not setting :()")
 	}
 	return pad.sendRequest(ctx, "createPad", params)
 }
