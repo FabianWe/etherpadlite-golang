@@ -27,8 +27,7 @@
 // context gets cancelled.
 // If you don't want to use any context stuff just set it to nil.
 //
-// Using one etherpadlite.EtherpadLite instance from multiple goroutines is
-// safe (if you're not setting any values on it).
+// It is safe to call the API methods simultaneously from multiple goroutines.
 //
 // I didn't document the methods since they're documented very well on the
 // etherpad-lite wiki.
