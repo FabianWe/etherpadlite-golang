@@ -84,7 +84,7 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams["apikey"] = apiKey
 	client := &http.Client{}
 	client.Timeout = time.Duration(20 * time.Second)
-	return &EtherpadLite{APIVersion: "1.2.12", BaseParams: baseParams,
+	return &EtherpadLite{APIVersion: "1.2.10", BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
 }
 
