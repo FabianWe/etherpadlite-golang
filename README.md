@@ -26,7 +26,7 @@ func main() {
 	fmt.Println(response.Message, response.Data)
 }
 ```
-All methods return two arguments: A [Response](https://godoc.org/github.com/FabianWe/etherpadlite-golang#Response) containing the parsed JSON response and an `error`. If `err != nil` something went really wrong, for example the connection to the host failed.
+All methods return two values: A [Response](https://godoc.org/github.com/FabianWe/etherpadlite-golang#Response) containing the parsed JSON response and an `error`. If `err != nil` something went really wrong, for example the connection to the host failed.
 
 You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite), for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
 
