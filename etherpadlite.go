@@ -305,6 +305,9 @@ func (pad *EtherpadLite) CreateDiffHTML(ctx context.Context, padID, startRev, en
 
 func (pad *EtherpadLite) GetChatHistory(ctx context.Context, padID, start, end interface{}) (*Response, error) {
 	params := map[string]interface{}{"padID": padID}
+	// actually here both start and end must be != OptionalParam, not just one
+	// of them. But we let the user read the docs, errors here are only for things
+	// that really go wrong
 	if start != OptionalParam {
 		params["start"] = start
 	}
