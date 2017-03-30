@@ -2,7 +2,7 @@
 An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) written in Go.
 
 ## Installation
-Run `go get FabianWe/etherpadlite-golang`.
+Run `go get github.com/FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 
 Note that you need Go >= 1.7 to use this package because the project uses the new [context](https://golang.org/pkg/context/) package that was formerly `golang.org/x/net/context`.
