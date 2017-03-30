@@ -48,7 +48,7 @@ response, err := pad.CreatePad(ctx, "foo", etherpadlite.OptionalParam)
 ```
 If a method has a default argument, such as `copyPad(sourceID, destinationID[, force=false])` setting the parameter to `OptionalParam` will set the value to its default.
 
-Using one `EtherpadLite` instance from multiple goroutines is safe (if you're not setting any values on it).
+It is safe to call the API methods simultaneously from multiple goroutines.
 
 ## License
 Copyright 2017 Fabian Wenzelmann <fabianwen@posteo.eu>
