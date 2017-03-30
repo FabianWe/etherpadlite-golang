@@ -2,7 +2,7 @@
 An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) written in Go.
 
 ## Installation
-Run `go get FabianWe/etherpadlite-golang`
+Run `go get FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 ## Supported API Versions
 Though I haven't tested each and every function I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
@@ -47,13 +47,13 @@ If a method has a default argument, such as `copyPad(sourceID, destinationID[, f
 
 Using one `EtherpadLite` instance from multiple goroutines is safe (if you're not setting any values on it).
 ## License
-Copyright 2017 Fabian Wenzelmann
+Copyright 2017 Fabian Wenzelmann <fabianwen@posteo.eu>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+    [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
