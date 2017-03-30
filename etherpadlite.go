@@ -49,9 +49,14 @@ import (
 // we don't want to use.
 type optionalParamType int
 
-// OptionalParam is a constant used to identify an optional parameter we don't
-// want to use.
-const OptionalParam optionalParamType = 0
+const (
+	// CurrentVersion is the default version to use.
+	CurrentVersion = "1.2.13"
+
+	// OptionalParam is a constant used to identify an optional parameter we don't
+	// want to use.
+	OptionalParam optionalParamType = 0
+)
 
 // EtherpadLite is a struct that is used to connect to the etherpadlite API.
 type EtherpadLite struct {
@@ -86,7 +91,7 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams["apikey"] = apiKey
 	client := &http.Client{}
 	client.Timeout = time.Duration(20 * time.Second)
-	return &EtherpadLite{APIVersion: "1.2.13", BaseParams: baseParams,
+	return &EtherpadLite{APIVersion: CurrentVersion, BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
 }
 
