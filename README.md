@@ -5,7 +5,7 @@ An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-li
 Run `go get FabianWe/etherpadlite-golang`
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 ## Supported API Versions
-Though I haven not tested each and every method I'm very confident that all versions including the newest version 1.2.10 are supported. Feedback is very welcome!
+Though I haven not tested each and every method I'm very confident that all versions including version 1.2.10 are supported. Feedback is very welcome!
 
 ## Usage
 Here's a very simple example that should give you the idean:
