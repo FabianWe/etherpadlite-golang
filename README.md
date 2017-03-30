@@ -5,10 +5,10 @@ An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-li
 Run `go get FabianWe/etherpadlite-golang`
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 ## Supported API Versions
-Though I haven not tested each and every method I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
+Though I haven't tested each and every function I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
 
 ## Usage
-Here's a very simple example that should give you the idean:
+Here's a very simple example that should give you the idea:
 ```go
 import (
 	"fmt"
@@ -28,16 +28,16 @@ func main() {
 ```
 All methods return two values: A [Response](https://godoc.org/github.com/FabianWe/etherpadlite-golang#Response) containing the parsed JSON response and an `error`. If `err != nil` something went really wrong, for example the connection to the host failed.
 
-You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite), for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
+You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite) element, for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
 
 An `EtherpadLite` instance has the following fields:
 
  - APIVersion: The HTTP API version. Defaults to 1.2.13. Note that this is a rather new version, if you have an older version of etherpad-lite you may have to adjust this!
  - BaseParams: A map that contains the parameters that are sent in every request. The API key gets added in `NewEtherpadLite`.
  - BaseURL: The URL pointing to the API of your pad, i.e. http://pad.domain/api. Defaults to http://localhost:9001/api in `NewEtherpadLite`.
- - Client: The client used to send the GET requests. The default Timeout for the Client is 20 seconds.
+ - Client: The [http.Client](https://golang.org/pkg/net/http/#Client) used to send the GET requests. The default Timeout for the Client is 20 seconds.
 
-All functions take as first argument a [context.Context](https://golang.org/pkg/context/#Context).  If you pass `ctx != nil` the methods will get cancelled when `ctx` gets cancelled (i.e. return no Response and an error != nil). If you don't want to use this simply set it to `nil`.
+All functions take as first argument a [context.Context](https://golang.org/pkg/context/#Context). If you pass `ctx != nil` the methods will get cancelled when `ctx` gets cancelled (i.e. return no Response and an error != nil). If you don't want to use a context at all simply set it to `nil` all the time.
 
 If a method has an optional field, for example `text` in `CreatePad`, set the value to `etherpadlite.OptionalParam` if you don't want to use it. So to create a pad without text do:
 ```go
