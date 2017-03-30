@@ -55,7 +55,8 @@ const OptionalParam optionalParamType = 0
 
 // EtherpadLite is a struct that is used to connect to the etherpadlite API.
 type EtherpadLite struct {
-	// APIVersion is the api version to use, at the moment it must be set to 1.
+	// APIVersion is the api version to use. It defaults to "1.2.13" in
+	// NewEtherpadLite.
 	APIVersion string
 
 	// BaseParams are the parameter that are required in each request, i.e.
