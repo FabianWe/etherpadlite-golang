@@ -23,5 +23,8 @@ import (
 func main() {
 	apiKey := "7e7d913826c58a5ded3c5bc2c426918650c92829ae6d30ca091441ea052a58a3"
 	pad := etherpadlite.NewEtherpadLite(apiKey)
-	fmt.Println(pad.CreateAuthor("bla", nil))
+	fmt.Println(pad.CreatePad(nil, "foo", 0))
+	// fmt.Println(pad.DeletePad(nil, "xxx"))
+	// fmt.Println(pad.DeletePad(nil, "foo"))
+	// fmt.Println(pad.DeletePad(nil, "bar"))
 }
