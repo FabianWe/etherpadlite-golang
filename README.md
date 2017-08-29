@@ -1,5 +1,5 @@
 # etherpadlite-golang
-An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) written in Go.
+An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) for Go.
 
 ## Installation
 Run `go get github.com/FabianWe/etherpadlite-golang`.
@@ -11,7 +11,8 @@ Note that you need Go >= 1.7 to use this package because the project uses the ne
 Though I haven't tested each and every function I'm very confident that all versions including version 1.2.13 are supported. Feedback is very welcome!
 
 ## Usage
-Here's a very simple example that should give you the idea:
+Here's a very simple example that should give you the idea. It creates a new pad called *foo* with some initial content.
+
 ```go
 import (
 	"fmt"
