@@ -102,10 +102,39 @@ func (pad *EtherpadLite) Timeout(timeout time.Duration) {
 	pad.Client.Timeout = timeout
 }
 
+// ReturnCode is the code return by the etherpad API, see API documentation
+// for more details.
+type ReturnCode int
+
+const (
+	EverythingOk ReturnCode = iota
+	WrongParamters
+	InternalError
+	NoSuchFunction
+	WrongAPIKey
+)
+
+func (c ReturnCode) String() string {
+	switch c {
+	case EverythingOk:
+		return "0 everything ok"
+	case WrongParamters:
+		return "1 wrong parameters"
+	case InternalError:
+		return "2 internal error"
+	case NoSuchFunction:
+		return "3 no such function"
+	case WrongAPIKey:
+		return "4 no or wrong API Key"
+	default:
+		return fmt.Sprintf("%d unknown return code", int(c))
+	}
+}
+
 // Response is the response from the etherpad API.
 // See https://github.com/ether/etherpad-lite/wiki/HTTP-API
 type Response struct {
-	Code    int
+	Code    ReturnCode
 	Message string
 	Data    map[string]interface{}
 }
