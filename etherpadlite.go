@@ -26,6 +26,8 @@
 // context the method will return nil and an error != nil when the
 // context gets cancelled.
 // If you don't want to use any context stuff just set it to nil.
+// This is however not the best practice to set the context, better set it to
+// context.Background or context.TODO if you don't want to use the context.
 //
 // It is safe to call the API methods simultaneously from multiple goroutines.
 //
@@ -36,12 +38,9 @@ package etherpadlite
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
-	"time"
 )
 
 // optionalParamType is an unexported type to identify an optional parameter
@@ -76,9 +75,8 @@ type EtherpadLite struct {
 	BaseURL string
 
 	// Client is used to send the GET requests to the API.
-	// Set the values as required, especially timeout is important.
-	// That's why there is a special Timeout method to set the timeout.
-	// Timeout defaults to 20 seconds in NewEtherpadLite.
+	// Set the values as required.
+	// It defaults to the http.DefaultClient in NewEtherpadLite.
 	Client *http.Client
 }
 
@@ -88,18 +86,9 @@ type EtherpadLite struct {
 func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams := make(map[string]interface{})
 	baseParams["apikey"] = apiKey
-	client := &http.Client{}
-	client.Timeout = time.Duration(20 * time.Second)
+	client := http.DefaultClient
 	return &EtherpadLite{APIVersion: CurrentVersion, BaseParams: baseParams,
 		BaseURL: "http://localhost:9001/api", Client: client}
-}
-
-// Timeout sets Client.Timeout. Since this is something people often want to
-// change I've added this wrapper.
-// The default timeout is 20s.
-// Of course using a context WithTimeout is nicer.
-func (pad *EtherpadLite) Timeout(timeout time.Duration) {
-	pad.Client.Timeout = timeout
 }
 
 // ReturnCode is the code return by the etherpad API, see API documentation
@@ -144,31 +133,10 @@ type Response struct {
 // do the http GET.
 // It decodes the JSON result and returns the decoded version.
 // If ctx != nil the method will be cancelled once ctx gets cancelled.
+// Note that ctx = nil, should not be used according to the documentation,
+// but we allow it since it's much easier.
+// Instead we could always use context.Background().
 func (pad *EtherpadLite) sendRequest(ctx context.Context, path string, params map[string]interface{}) (*Response, error) {
-	type resType struct {
-		response *Response
-		err      error
-	}
-	if ctx == nil {
-		return pad.sendRequestWithoutContext(ctx, path, params)
-	}
-	ch := make(chan *resType, 1)
-	go func() {
-		resp, resErr := pad.sendRequestWithoutContext(ctx, path, params)
-		ch <- &resType{response: resp, err: resErr}
-	}()
-	select {
-	case <-ctx.Done():
-		return nil, errors.New("ctx cancelled")
-	case res := <-ch:
-		return res.response, res.err
-	}
-}
-
-// sendRequestWithoutContext does the actual stuff, it gets the request
-// and ignores the ctx. sendRequest listens on done and calls this method in
-// a different goroutine.
-func (pad *EtherpadLite) sendRequestWithoutContext(ctx context.Context, path string, params map[string]interface{}) (*Response, error) {
 	getURL, err := url.Parse(fmt.Sprintf("%s/%s/%s", pad.BaseURL, pad.APIVersion, path))
 	if err != nil {
 		return nil, err
@@ -195,13 +163,8 @@ func (pad *EtherpadLite) sendRequestWithoutContext(ctx context.Context, path str
 	if doErr != nil {
 		return nil, doErr
 	}
-	allContent, readErr := ioutil.ReadAll(resp.Body)
-	if readErr != nil {
-		return nil, readErr
-	}
 	var padResponse Response
-	jsonErr := json.Unmarshal(allContent, &padResponse)
-	if jsonErr != nil {
+	if jsonErr := json.NewDecoder(resp.Body).Decode(&padResponse); jsonErr != nil {
 		return nil, jsonErr
 	}
 	return &padResponse, nil
