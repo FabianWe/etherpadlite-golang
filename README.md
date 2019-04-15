@@ -61,7 +61,7 @@ So after checking for the error returned by the API function you can check for e
 So use something like
 
 ```go
-if resp.Code != etherpadlite.EverythingOk {
+if response.Code != etherpadlite.EverythingOk {
 	fmt.Println("Something went wrong...")
 }
 ```
