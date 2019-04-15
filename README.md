@@ -56,6 +56,15 @@ func main() {
 ```
 
 All methods return two values: A [Response](https://godoc.org/github.com/FabianWe/etherpadlite-golang#Response) containing the parsed JSON response and an `error`. If `err != nil` something went really wrong, for example the connection to the host failed or the context was cancelled while doing the request.
+It is still possible that something went wrong inside of etherpad. The response has a field of type [ReturnCode](https://godoc.org/github.com/FabianWe/etherpadlite-golang#ReturnCode). If this code is != EverythingOk (constant in the package) something went wrong inside of the etherpad client.
+So after checking for the error returned by the API function you can check for errors in the return code.
+So use something like
+
+```go
+if resp.Code != etherpadlite.EverythingOk {
+	fmt.Println("Something went wrong...")
+}
+```
 
 You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite) element, for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
 
