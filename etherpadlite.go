@@ -33,9 +33,7 @@
 // It is safe to call the API methods simultaneously from multiple goroutines.
 //
 // I didn't document the methods since they're documented very well on the
-// etherpad-lite wiki.
-// Note: The link to the HTTP API seems to be broken at the moment, I don't know
-// why the page with the documentation was removed.
+// etherpad homepage: https://etherpad.org/doc/v1.7.5/#index_http_api
 package etherpadlite
 
 import (

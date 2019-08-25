@@ -1,6 +1,6 @@
 
 # etherpadlite-golang
-An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) for Go.
+An interface for [Etherpad-Lite's HTTP API](https://etherpad.org/doc/v1.7.5/#index_http_api) for Go.
 
 ## Installation
 Run `go get github.com/FabianWe/etherpadlite-golang`.
@@ -28,6 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// note that an API error is still possible, see below
 	fmt.Println(response.Code, response.Message, response.Data)
 }
 ```
@@ -57,7 +58,7 @@ func main() {
 ```
 
 All methods return two values: A [Response](https://godoc.org/github.com/FabianWe/etherpadlite-golang#Response) containing the parsed JSON response and an `error`. If `err != nil` something went really wrong, for example the connection to the host failed or the context was cancelled while doing the request.
-It is still possible that something went wrong inside of etherpad. The response has a field of type [ReturnCode](https://godoc.org/github.com/FabianWe/etherpadlite-golang#ReturnCode). If this code is != EverythingOk (constant in the package) something went wrong inside of the etherpad client.
+It is still possible that something went wrong inside of etherpad. The response has a field of type [ReturnCode](https://godoc.org/github.com/FabianWe/etherpadlite-golang#ReturnCode). If this code is != `EverythingOk` (constant in the package) something went wrong inside of the etherpad client.
 So after checking for the error returned by the API function you can check for errors in the return code.
 So use something like
 
