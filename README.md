@@ -72,6 +72,7 @@ As of version 1.1 (August 2019) it's also possible to return all etherpad API er
 ```go
 pad.RaiseEtherpadErrors = true
 ```
+In this case all responses with error code != `EverythingOk` will be returned as an error of type [EtherpadError](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadError).
 
 You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite) element, for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
 
@@ -81,6 +82,7 @@ An `EtherpadLite` instance has the following fields:
  - BaseParams: A map that contains the parameters that are sent in every request. The API key gets added in `NewEtherpadLite`.
  - BaseURL: The URL pointing to the API of your pad, i.e. http://pad.domain/api. Defaults to http://localhost:9001/api in `NewEtherpadLite`.
  - Client: The [http.Client](https://golang.org/pkg/net/http/#Client) used to send the GET requests.
+ - RaiseEtherpadErrors: If set to true all errors from the etherpad API (return code != `EverythingOk`) will be returned as a Go error of type `EtherpadError` instead of being 'hidden' in the response.
 
 All functions take as first argument a [context.Context](https://golang.org/pkg/context/#Context). If you pass `ctx != nil` the methods will get cancelled when `ctx` gets cancelled (i.e. return no Response and an error != nil). If you don't want to use a context at all simply set it to `nil` all the time. This is however not the optimal way of ignoring the context, according to the documentation you should always use a non-nil context, so better set it to [context.Background](https://golang.org/pkg/context/#Background) or [context.TODO](https://golang.org/pkg/context/#TODO).
 
