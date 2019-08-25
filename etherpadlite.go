@@ -1,4 +1,4 @@
-// Copyright 2017 Fabian Wenzelmann <fabianwen@posteo.eu>
+// Copyright 2017 - 2019 Fabian Wenzelmann <fabianwen@posteo.eu>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// etherpadlite provides an interface for Etherpad-Lite's HTTP API written in Go.
+// Package etherpadlite provides an interface for Etherpad-Lite's HTTP API
+// written entirely in Go.
 // The API documentation can be found at https://github.com/ether/etherpad-lite/wiki/HTTP-API.
 // To use it create an instance of etherpadlite.EtherpadLite and call the
 // API methods on it, for example CreatePad(nil, padID, text).
@@ -33,6 +34,8 @@
 //
 // I didn't document the methods since they're documented very well on the
 // etherpad-lite wiki.
+// Note: The link to the HTTP API seems to be broken at the moment, I don't know
+// why the page with the documentation was removed.
 package etherpadlite
 
 import (
@@ -78,6 +81,15 @@ type EtherpadLite struct {
 	// Set the values as required.
 	// It defaults to the http.DefaultClient in NewEtherpadLite.
 	Client *http.Client
+
+	// RaiseEtherpadErrors specifies if errors returned by etherpad should be
+	// returned as errors in Go or should be handled by the caller by checking
+	// the response code.
+	// It defaults to False.
+	// By setting it to true the calls to all functions will return an error
+	// for all responses with Response.Code != EverythingOk.
+	// In this case an instance of EtherpadError is raised.
+	RaiseEtherpadErrors bool
 }
 
 // NewEtherpadLite creates a new EtherpadLite instance given the
@@ -87,8 +99,12 @@ func NewEtherpadLite(apiKey string) *EtherpadLite {
 	baseParams := make(map[string]interface{})
 	baseParams["apikey"] = apiKey
 	client := http.DefaultClient
-	return &EtherpadLite{APIVersion: CurrentVersion, BaseParams: baseParams,
-		BaseURL: "http://localhost:9001/api", Client: client}
+	return &EtherpadLite{APIVersion: CurrentVersion,
+		BaseParams: baseParams,
+		BaseURL: "http://localhost:9001/api",
+		Client: client,
+		RaiseEtherpadErrors: false,
+	}
 }
 
 // ReturnCode is the code return by the etherpad API, see API documentation
@@ -126,6 +142,28 @@ type Response struct {
 	Code    ReturnCode
 	Message string
 	Data    map[string]interface{}
+}
+
+// EtherpadError is an error returned by all methods if
+// EtherpadLite.RaiseEtherpadErrors is true. It reports any internal error
+// returned by calling the HTTP API of etherpad, signaling that the ReturnCode
+// is not EverythingOk.
+type EtherpadError struct {
+	code ReturnCode
+	message string
+}
+
+// NewEtherpadError returns a new EtherpadError.
+// The code should be != EverythingOk and the message is the error message
+// returned by the HTTP API.
+func NewEtherpadError(code ReturnCode, message string) EtherpadError {
+	return EtherpadError{code: code, message: message}
+}
+
+// Error returns the error as a string.
+func (e EtherpadError) Error() string {
+	codeStr := e.code.String()
+	return fmt.Sprintf("%s: %s", codeStr, e.message)
 }
 
 // sendRequest is the function doing most of the work by sending the real
@@ -166,6 +204,11 @@ func (pad *EtherpadLite) sendRequest(ctx context.Context, path string, params ma
 	var padResponse Response
 	if jsonErr := json.NewDecoder(resp.Body).Decode(&padResponse); jsonErr != nil {
 		return nil, jsonErr
+	}
+	// check how to handle response errors
+	// and if we have to care about them what to do about it
+	if pad.RaiseEtherpadErrors && padResponse.Code != EverythingOk {
+		return &padResponse, NewEtherpadError(padResponse.Code, padResponse.Message)
 	}
 	return &padResponse, nil
 }

@@ -1,3 +1,4 @@
+
 # etherpadlite-golang
 An interface for [Etherpad-Lite's HTTP API](https://github.com/ether/etherpad-lite/wiki/HTTP-API) for Go.
 
@@ -66,6 +67,12 @@ if response.Code != etherpadlite.EverythingOk {
 }
 ```
 
+As of version 1.1 (August 2019) it's also possible to return all etherpad API errors directly instead of doing the check above. Just set `RaiseEtherpadErrors = true` on your `EtherpadLite` instance:
+
+```go
+pad.RaiseEtherpadErrors = true
+```
+
 You can configure the [EtherpadLite](https://godoc.org/github.com/FabianWe/etherpadlite-golang#EtherpadLite) element, for example configure the [http.Client](https://golang.org/pkg/net/http/#Client).
 
 An `EtherpadLite` instance has the following fields:
@@ -86,7 +93,7 @@ If a method has a default argument, such as `copyPad(sourceID, destinationID[, f
 It is safe to call the API methods simultaneously from multiple goroutines.
 
 ## License
-Copyright 2017 Fabian Wenzelmann <fabianwen@posteo.eu>
+Copyright 2017 - 2019 Fabian Wenzelmann <fabianwen@posteo.eu>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
