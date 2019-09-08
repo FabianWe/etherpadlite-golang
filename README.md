@@ -7,7 +7,7 @@ Version 1.1 was released on September 2019.
 Two things were changed, one that might affect currently running code.
 
 First, a new option to return all ethperpad errors as Go errors was introduced (see below).
-Second a type was removed from the code. The constant `WrongParameters` had a missing e, so I fixed the spelling.
+Second a typo was removed from the code. The constant `WrongParameters` had a missing e, so I fixed the spelling.
 Please rename this constant!
 
 ## Installation
