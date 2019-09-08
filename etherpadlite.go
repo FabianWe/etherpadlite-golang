@@ -111,7 +111,7 @@ type ReturnCode int
 
 const (
 	EverythingOk ReturnCode = iota
-	WrongParamters
+	WrongParameters
 	InternalError
 	NoSuchFunction
 	WrongAPIKey
@@ -121,7 +121,7 @@ func (c ReturnCode) String() string {
 	switch c {
 	case EverythingOk:
 		return "0 everything ok"
-	case WrongParamters:
+	case WrongParameters:
 		return "1 wrong parameters"
 	case InternalError:
 		return "2 internal error"

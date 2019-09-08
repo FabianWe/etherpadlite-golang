@@ -2,6 +2,14 @@
 # etherpadlite-golang
 An interface for [Etherpad-Lite's HTTP API](https://etherpad.org/doc/v1.7.5/#index_http_api) for Go.
 
+## Version 1.1
+Version 1.1 was release on September 2019.
+Two things were changed, one that might affect currently running code.
+
+First, a new option to return all ethperpad errors as Go errors was introduced (see below).
+Second a type was removed from the code. The constant `WrongParameters` had a missing e, so I fixed the spelling.
+Please rename this constant!
+
 ## Installation
 Run `go get github.com/FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
@@ -68,7 +76,7 @@ if response.Code != etherpadlite.EverythingOk {
 }
 ```
 
-As of version 1.1 (August 2019) it's also possible to return all etherpad API errors directly instead of doing the check above. Just set `RaiseEtherpadErrors = true` on your `EtherpadLite` instance:
+As of version 1.1 (September 2019) it's also possible to return all etherpad API errors directly instead of doing the check above. Just set `RaiseEtherpadErrors = true` on your `EtherpadLite` instance:
 
 ```go
 pad.RaiseEtherpadErrors = true
