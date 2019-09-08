@@ -3,7 +3,7 @@
 An interface for [Etherpad-Lite's HTTP API](https://etherpad.org/doc/v1.7.5/#index_http_api) for Go.
 
 ## Version 1.1
-Version 1.1 was release on September 2019.
+Version 1.1 was released on September 2019.
 Two things were changed, one that might affect currently running code.
 
 First, a new option to return all ethperpad errors as Go errors was introduced (see below).
