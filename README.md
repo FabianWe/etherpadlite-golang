@@ -11,6 +11,9 @@ Second a typo was removed from the code. The constant `WrongParameters` had a mi
 Please rename this constant!
 
 ## Installation
+As of April 19 2020 go modules are supported.
+I've added version 1.1.0 as the first version with go mod support.
+
 Run `go get github.com/FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
 
