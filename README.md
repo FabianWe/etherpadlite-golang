@@ -13,7 +13,7 @@ Please rename this constant!
 ## Installation
 As of April 19 2020 go modules are supported.
 I've added version 1.1.0 as the first version with go mod support.
-Thus `go get` in the "old-fashioned way" mentioned above should not be used anymore.
+Thus `go get` in the "old-fashioned way" mentioned below should not be used anymore.
 
 Run `go get github.com/FabianWe/etherpadlite-golang`.
 Read the code documentation on [GoDoc](https://godoc.org/github.com/FabianWe/etherpadlite-golang).
